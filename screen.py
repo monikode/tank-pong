@@ -11,8 +11,8 @@ class Screen:
         self.arena = self.surface.subsurface(
             (0, TOP_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - TOP_BAR_HEIGHT))
 
-    def draw(self, tank1, tank2, balls):
+    def draw(self, map, tank1, tank2, balls):
         self.surface.fill(BG_COLOR)
 
-        for rect in SCREEN_RECTS:
+        for rect in map:
             pygame.draw.rect(self.arena, RECTS_COLOR, rect)
