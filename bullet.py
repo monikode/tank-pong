@@ -7,7 +7,6 @@ class Bullet:
     size = 5
     speed = 5
     collided_tank = False
-    count = 0
 
     def __init__(self, x, y,  x_direction, y_direction) -> None:
         self.x = x
@@ -16,6 +15,8 @@ class Bullet:
         self.y_velocity = y_direction * SPEED
         self.x_direction = x_direction if x_direction >= 0 else -x_direction
         self.y_direction = y_direction if y_direction >= 0 else -y_direction
+        self.start_time = pygame.time.get_ticks()
+        self.end_life = False
 
     def is_colliding_walls(self, map):
         for rect in map:
@@ -37,8 +38,6 @@ class Bullet:
     def is_colliding_tank(self, tank_rect):
         self.collided_tank = pygame.Rect(
             self.x, self.y, self.size, self.size).colliderect(tank_rect)
-        if self.collided_tank:
-            self.size = 0
 
     def move(self, map, tank):
         self.is_colliding_walls(map)
@@ -46,7 +45,9 @@ class Bullet:
 
         self.x += self.x_velocity
         self.y += self.y_velocity
-        self.count += 1
+
+        if (pygame.time.get_ticks() - self.start_time)/1000 >= 25:
+            self.end_life = True
 
     def get_rect(self):
         return (self.x, self.y, self.size, self.size)

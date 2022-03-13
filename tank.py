@@ -1,8 +1,8 @@
-from random import random
+import random
 import pygame
 from bullet import Bullet
 
-from config import SPEED
+from config import SPEED, TOP_BAR_HEIGHT
 
 
 class Tank:
@@ -45,20 +45,30 @@ class Tank:
         if key[self.key_shoot]:
             if not self.shooted:
                 self.bullets.append(
-                    Bullet(self.x + self.size/2, self.y + self.size/2,-self.x_velocity / SPEED, -self.y_velocity/SPEED))
+                    Bullet(self.x + self.size/2, self.y + self.size/2, -self.x_velocity / SPEED, -self.y_velocity/SPEED))
             self.shooted = True
         else:
             self.shooted = False
 
-    def move(self, map):
+    def move(self, map, enemy_rect):
         self.direction = 0
-        self.listen_keyboard()
+        if not self.spin:
+            self.listen_keyboard()
+
+        if self.angle > 360:
+            self.angle = 0
+        elif self.angle < 0:
+            self.angle = 360
 
         quad = self.angle/90  # ver se ta pra direita esquerda etc
-        deg = quad % 1  # ver se ta 0 0.25 .5 .75
+        deg = quad % 1
+        quad -= quad % 1
+
+        if quad == 1 or quad == 3:
+            deg = 1 - deg
 
         middle = 0.125
-        if deg < 0.25 - middle and quad % 2 == 0:
+        if deg < 0.25 - middle:
             self.tank_angle = 0
             self.x_velocity = SPEED
             self.y_velocity = 0
@@ -79,27 +89,39 @@ class Tank:
             self.x_velocity = 0
             self.y_velocity = SPEED
 
-        if quad > 2:
-            self.y_velocity = -self.y_velocity
-        if quad > 1 and quad < 2 or quad > 3:
+        if self.angle <= 90 or self.angle >= 270:
             self.x_velocity = -self.x_velocity
+
+        if self.angle > 180:
+            self.y_velocity = -self.y_velocity
 
         rect = pygame.Rect(self.x + (self.x_velocity * self.direction),
                            self.y + (self.y_velocity * self.direction), self.size, self.size)
 
-        if rect.collidelist(map) < 0:
+        if rect.collidelist(map + [enemy_rect]) < 0:
             self.x += self.x_velocity * self.direction
             self.y += self.y_velocity * self.direction
-        
+
         for bullet in self.bullets:
-            bullet.move(map, (0, 0, 0, 0))
+            bullet.move(map, enemy_rect)
+            if bullet.end_life:
+                self.bullets.remove(bullet)
+
+        if self.start_spin > 200:
+            self.spin = False
+            self.random_pos(map)
+            self.start_spin = 0
+        if self.spin:
+            self.start_spin += 1
+            self.angle += 22.5
 
     def get_image(self) -> pygame.Surface:
+
         sub = self.tank_sprite.subsurface(
             (self.tank_angle * self.size, 0, self.size, self.size))
 
-        horizontal = self.x_velocity < 0
         vertical = self.y_velocity < 0
+        horizontal = self.x_velocity < 0
         return pygame.transform.flip(sub, horizontal, vertical)
 
     def get_rect(self):
@@ -108,18 +130,26 @@ class Tank:
     def get_coord(self):
         return (self.x, self.y)
 
-    def draw(self, surface:pygame.Surface):
+    def draw(self, surface: pygame.Surface):
         surface.blit(self.get_image(), self.get_coord())
         for bullet in self.bullets:
             pygame.draw.rect(surface, self.color, bullet.get_rect())
 
-    def random_pos (self, rects):
+    def random_pos(self, rects):
         while True:
-            x = random.randrange(800)
-            y = random.randrange(600)
-            
+            x = random.randint(0, 800)
+            y = random.randint(0, 600 - TOP_BAR_HEIGHT)
+
             rect = pygame.Rect(x, y, self.size, self.size)
             if rect.collidelist(rects) < 0:
+                self.x = x
+                self.y = y
+
                 break
 
-
+    def has_shooted_enemy(self):
+        for bullet in self.bullets:
+            if bullet.collided_tank:
+                self.bullets.remove(bullet)
+                return True
+        return False
