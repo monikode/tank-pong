@@ -10,7 +10,7 @@ class Screen:
         self.surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.arena = self.surface.subsurface(
             (0, TOP_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - TOP_BAR_HEIGHT))
-        self.font = pygame.font.Font("img/DSEG14Classic-Bold.ttf", 34)
+        self.font = pygame.font.Font("img/Square.ttf", 54)
 
     def draw(self, map, score):
         self.surface.fill(BG_COLOR)
@@ -20,8 +20,8 @@ class Screen:
         score_p2 = self.font.render(
             str(score[1]), True, TANK_2_COLOR)
 
-        self.surface.blit(score_p1, (220, 20))
-        self.surface.blit(score_p2, (550, 20))
+        self.surface.blit(score_p1, (220, 10))
+        self.surface.blit(score_p2, (550, 10))
 
         for rect in map:
             pygame.draw.rect(self.arena, RECTS_COLOR, rect)
