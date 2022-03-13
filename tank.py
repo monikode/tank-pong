@@ -50,6 +50,20 @@ class Tank:
         else:
             self.shooted = False
 
+    def colliding_rects(self, rects):
+        rect = pygame.Rect(self.x + (self.x_velocity * self.direction),
+                           self.y + (self.y_velocity * self.direction), self.size, self.size)
+
+        if rect.collidelist(rects) < 0:
+            self.x += self.x_velocity * self.direction
+            self.y += self.y_velocity * self.direction
+
+    def balls_move(self, map, enemy_rect):
+        for bullet in self.bullets:
+            bullet.move(map, enemy_rect)
+            if bullet.end_life:
+                self.bullets.remove(bullet)
+
     def move(self, map, enemy_rect):
         self.direction = 0
         if not self.spin:
@@ -95,17 +109,8 @@ class Tank:
         if self.angle > 180:
             self.y_velocity = -self.y_velocity
 
-        rect = pygame.Rect(self.x + (self.x_velocity * self.direction),
-                           self.y + (self.y_velocity * self.direction), self.size, self.size)
-
-        if rect.collidelist(map + [enemy_rect]) < 0:
-            self.x += self.x_velocity * self.direction
-            self.y += self.y_velocity * self.direction
-
-        for bullet in self.bullets:
-            bullet.move(map, enemy_rect)
-            if bullet.end_life:
-                self.bullets.remove(bullet)
+        self.colliding_rects(map + [enemy_rect])
+        self.balls_move(map, enemy_rect)
 
         if self.start_spin > 200:
             self.spin = False
