@@ -27,7 +27,7 @@ class Tank:
         self.key_left = key_left
         self.key_shoot = key_shoot
 
-        self.bullets = []
+        self.bullet = None
         self.shooted = False
         self.spin = False
         self.start_spin = 0
@@ -43,9 +43,9 @@ class Tank:
         if key[self.key_up]:
             self.direction = -1
         if key[self.key_shoot]:
-            if not self.shooted:
-                self.bullets.append(
-                    Bullet(self.x + self.size/2, self.y + self.size/2, -self.x_velocity / SPEED, -self.y_velocity/SPEED))
+            if not self.shooted and self.bullet == None:
+                self.bullet = Bullet(self.x + self.size/2, self.y + self.size /
+                                     2, -self.x_velocity / SPEED, -self.y_velocity/SPEED)
             self.shooted = True
         else:
             self.shooted = False
@@ -58,11 +58,11 @@ class Tank:
             self.x += self.x_velocity * self.direction
             self.y += self.y_velocity * self.direction
 
-    def balls_move(self, map, enemy_rect):
-        for bullet in self.bullets:
-            bullet.move(map, enemy_rect)
-            if bullet.end_life:
-                self.bullets.remove(bullet)
+    def bullet_move(self, map, enemy_rect):
+        if self.bullet != None:
+            self.bullet.move(map, enemy_rect)
+            if self.bullet.end_life:
+                self.bullet = None
 
     def move(self, map, enemy_rect):
         self.direction = 0
@@ -110,7 +110,7 @@ class Tank:
             self.y_velocity = -self.y_velocity
 
         self.colliding_rects(map + [enemy_rect])
-        self.balls_move(map, enemy_rect)
+        self.bullet_move(map, enemy_rect)
 
         if self.start_spin > 200:
             self.spin = False
@@ -137,8 +137,8 @@ class Tank:
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.get_image(), self.get_coord())
-        for bullet in self.bullets:
-            pygame.draw.rect(surface, self.color, bullet.get_rect())
+        if self.bullet != None:
+            pygame.draw.rect(surface, self.color, self.bullet.get_rect())
 
     def random_pos(self, rects):
         while True:
@@ -153,8 +153,7 @@ class Tank:
                 break
 
     def has_shooted_enemy(self):
-        for bullet in self.bullets:
-            if bullet.collided_tank:
-                self.bullets.remove(bullet)
-                return True
+        if self.bullet != None and self.bullet.collided_tank:
+            self.bullet = None
+            return True
         return False
