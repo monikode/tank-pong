@@ -7,8 +7,9 @@ from config import SPEED, TOP_BAR_HEIGHT
 
 class Tank:
     size = 45
+    pygame.mixer.init()
 
-    def __init__(self, initial_coord,  color, key_left, key_up, key_right, key_down, key_shoot):
+    def __init__(self, initial_coord, color, key_left, key_up, key_right, key_down, key_shoot):
         self.tank_sprite = pygame.image.load(
             "img/tank.png")
         self.tank_sprite.fill(color, None, pygame.BLEND_MAX)
@@ -32,6 +33,11 @@ class Tank:
         self.spin = False
         self.start_spin = 0
 
+        self.sound_shot = pygame.mixer.Sound("sound/shot.mp3")
+        self.sound_move = pygame.mixer.Sound("sound/move.mp3")
+        self.sound_explosion = pygame.mixer.Sound("sound/explosion.mp3")
+        self.sound_move.set_volume(0.6)
+
     def listen_keyboard(self):
         key = pygame.key.get_pressed()
         if key[self.key_left]:
@@ -44,11 +50,15 @@ class Tank:
             self.direction = -1
         if key[self.key_shoot]:
             if not self.shooted and self.bullet == None:
-                self.bullet = Bullet(self.x + self.size/2, self.y + self.size /
-                                     2, -self.x_velocity / SPEED, -self.y_velocity/SPEED)
+                pygame.mixer.Channel(3).play(self.sound_shot)
+                self.bullet = Bullet(self.x + self.size / 2, self.y + self.size /
+                                     2, -self.x_velocity / SPEED, -self.y_velocity / SPEED)
             self.shooted = True
         else:
             self.shooted = False
+
+        if key[self.key_left] or key[self.key_right] or key[self.key_up] or key[self.key_down]:
+            pygame.mixer.Channel(2).play(self.sound_move)
 
     def colliding_rects(self, rects):
         rect = pygame.Rect(self.x + (self.x_velocity * self.direction),
@@ -74,7 +84,7 @@ class Tank:
         elif self.angle < 0:
             self.angle = 360
 
-        quad = self.angle/90  # ver se ta pra direita esquerda etc
+        quad = self.angle / 90  # ver se ta pra direita esquerda etc
         deg = quad % 1
         quad -= quad % 1
 
@@ -89,14 +99,14 @@ class Tank:
         elif deg < 0.5 - middle:
             self.tank_angle = 1
             self.x_velocity = SPEED
-            self.y_velocity = SPEED/2
+            self.y_velocity = SPEED / 2
         elif deg < 0.75 - middle:
             self.tank_angle = 2
             self.x_velocity = SPEED
             self.y_velocity = SPEED
         elif deg < 1 - middle:
             self.tank_angle = 3
-            self.x_velocity = SPEED/2
+            self.x_velocity = SPEED / 2
             self.y_velocity = SPEED
         else:
             self.tank_angle = 4
@@ -155,5 +165,6 @@ class Tank:
     def has_shooted_enemy(self):
         if self.bullet != None and self.bullet.collided_tank:
             self.bullet = None
+            pygame.mixer.Channel(1).play(self.sound_explosion)
             return True
         return False
