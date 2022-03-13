@@ -13,6 +13,9 @@ class Game:
         self.playing = True
         self.screen = Screen()
         self.score = (0, 0)
+        self.font = pygame.font.Font("img/DSEG14Classic-Bold.ttf", 34)
+        self.score_p1 = self.font.render(str(self.score[0]), True, TANK_1_COLOR)
+        self.score_p2 = self.font.render(str(self.score[1]), True, TANK_2_COLOR)
         self.clock = pygame.time.Clock()
         self.map = SCREEN_RECTS
         self.tank1 = Tank((45, 243), TANK_1_COLOR, pygame.K_LEFT,
@@ -44,6 +47,10 @@ class Game:
                 self.tank1.get_image(), (self.tank1.x, self.tank1.y))
             self.screen.arena.blit(
                 self.tank2.get_image(), (self.tank2.x, self.tank2.y))
+
+            #  Score HUD
+            self.screen.surface.blit(self.score_p1, (220, 20))
+            self.screen.surface.blit(self.score_p2, (550, 20))
 
             pygame.display.flip()
             self.clock.tick(60)
