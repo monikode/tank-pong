@@ -5,7 +5,10 @@ TOP_BAR_HEIGHT = 69
 
 BG_COLOR = (139, 37, 10)
 RECTS_COLOR = (192, 150, 55)
+TANK_1_COLOR = (137, 199, 76)
+TANK_2_COLOR = (71, 83, 207)
 
+SPEED = 4
 SCREEN_RECTS = [
     # bordas
     (0, 0, 800, 20),
