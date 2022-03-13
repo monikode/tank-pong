@@ -35,11 +35,11 @@ class Tank:
     def listen_keyboard(self):
         key = pygame.key.get_pressed()
         if key[self.key_left]:
-            self.angle -= 1
+            self.angle += 4
         if key[self.key_down]:
             self.direction = 1
         if key[self.key_right]:
-            self.angle += 1
+            self.angle -= 4
         if key[self.key_up]:
             self.direction = -1
         if key[self.key_shoot]:

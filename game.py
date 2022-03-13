@@ -35,11 +35,11 @@ class Game:
         self.tank2.move(
             self.map, self.tank1.get_rect())
 
-        if self.tank1.has_shooted_enemy():
+        if self.tank1.has_shooted_enemy() and not self.tank2.spin:
             self.tank2.spin = True
             self.score = (self.score[0] + 1, self.score[1])
 
-        if self.tank2.has_shooted_enemy():
+        if self.tank2.has_shooted_enemy() and not self.tank2.spin:
             self.tank1.spin = True
             self.score = (self.score[0], self.score[1]+1)
 
