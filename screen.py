@@ -10,7 +10,7 @@ class Screen:
         self.surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.arena = self.surface.subsurface(
             (0, TOP_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - TOP_BAR_HEIGHT))
-        self.font = pygame.font.Font("img/Square.ttf", 54)
+        self.font = pygame.font.Font("font/Megafont.ttf", 54)
 
     def draw(self, map, score):
         self.surface.fill(BG_COLOR)
