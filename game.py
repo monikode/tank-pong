@@ -1,5 +1,3 @@
-
-
 from logging.config import listen
 from sqlite3 import Time
 from time import time
@@ -20,7 +18,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.map = SCREEN_RECTS
         self.tank1 = Tank((45, 243), TANK_1_COLOR, pygame.K_LEFT,
-                          pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_SPACE)
+                          pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN,
+                          pygame.K_SPACE)
         self.tank2 = Tank((710, 243), TANK_2_COLOR, pygame.K_a,
                           pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_q)
 

@@ -28,7 +28,8 @@ class Bullet:
             is_in_y = self.y >= rect[1] and self.y + \
                 self.size <= rect[1] + rect[3]
 
-            if is_in_x and self.y + self.size >= rect[1] and self.y + self.size <= rect[1] + rect[3]:
+            if is_in_x and self.y + self.size >= rect[1] and \
+                    self.y + self.size <= rect[1] + rect[3]:
                 self.y_velocity = -self.y_direction * self.speed
                 pygame.mixer.Channel(0).play(self.sound_collision)
             if is_in_x and self.y <= rect[1] + rect[3] and self.y >= rect[1]:
@@ -38,7 +39,8 @@ class Bullet:
             if is_in_y and self.x <= rect[0] + rect[2] and self.x >= rect[0]:
                 self.x_velocity = self.x_direction * self.speed
                 pygame.mixer.Channel(0).play(self.sound_collision)
-            if is_in_y and self.x + self.size >= rect[0] and self.x + self.size <= rect[0] + rect[2]:
+            if is_in_y and self.x + self.size >= rect[0] and \
+                    self.x + self.size <= rect[0] + rect[2]:
                 self.x_velocity = -self.x_direction * self.speed
                 pygame.mixer.Channel(0).play(self.sound_collision)
 

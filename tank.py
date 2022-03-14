@@ -9,7 +9,8 @@ class Tank:
     size = 45
     pygame.mixer.init()
 
-    def __init__(self, initial_coord, color, key_left, key_up, key_right, key_down, key_shoot):
+    def __init__(self, initial_coord, color, key_left, key_up, key_right,
+                 key_down, key_shoot):
         self.tank_sprite = pygame.image.load(
             "img/tank.png")
         self.tank_sprite.fill(color, None, pygame.BLEND_MAX)
@@ -49,27 +50,31 @@ class Tank:
         if key[self.key_up]:
             self.direction = -1
         if key[self.key_shoot]:
-            if not self.shooted and self.bullet == None:
+            if not self.shooted and self.bullet is None:
                 pygame.mixer.Channel(3).play(self.sound_shot)
-                self.bullet = Bullet(self.x + self.size / 2, self.y + self.size /
-                                     2, -self.x_velocity / SPEED, -self.y_velocity / SPEED)
+                self.bullet = Bullet(self.x + self.size / 2,
+                                     self.y + self.size /
+                                     2, -self.x_velocity / SPEED,
+                                     -self.y_velocity / SPEED)
             self.shooted = True
         else:
             self.shooted = False
 
-        if key[self.key_left] or key[self.key_right] or key[self.key_up] or key[self.key_down]:
+        if key[self.key_left] or key[self.key_right] or key[self.key_up] or \
+                key[self.key_down]:
             pygame.mixer.Channel(2).play(self.sound_move)
 
     def colliding_rects(self, rects):
         rect = pygame.Rect(self.x + (self.x_velocity * self.direction),
-                           self.y + (self.y_velocity * self.direction), self.size, self.size)
+                           self.y + (self.y_velocity * self.direction),
+                           self.size, self.size)
 
         if rect.collidelist(rects) < 0:
             self.x += self.x_velocity * self.direction
             self.y += self.y_velocity * self.direction
 
     def bullet_move(self, map, enemy_rect):
-        if self.bullet != None:
+        if self.bullet is not None:
             self.bullet.move(map, enemy_rect)
             if self.bullet.end_life:
                 self.bullet = None
@@ -147,7 +152,7 @@ class Tank:
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.get_image(), self.get_coord())
-        if self.bullet != None:
+        if self.bullet is not None:
             pygame.draw.rect(surface, self.color, self.bullet.get_rect())
 
     def random_pos(self, rects):
@@ -163,7 +168,7 @@ class Tank:
                 break
 
     def has_shooted_enemy(self):
-        if self.bullet != None and self.bullet.collided_tank:
+        if self.bullet is not None and self.bullet.collided_tank:
             self.bullet = None
             pygame.mixer.Channel(1).play(self.sound_explosion)
             return True
